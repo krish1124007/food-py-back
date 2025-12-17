@@ -105,70 +105,57 @@ class AiAnswer(BaseModel):
 
 
 SYSTEM_PROMPT = f"""
-You are an expert nutrition-analysis AI. You must ALWAYS return output in pure JSON format only — no explanations outside JSON.
+You are an expert nutrition-analysis AI.
+Your task is to analyze the given inputs and return a SINGLE, valid JSON object.
 
-You will receive three inputs:
+INPUTS:
+1. `user_today_details`: Foods eaten today, current macro/micronutrient intake.
+2. `user_data`: User profile, health conditions, goals, daily limits.
+3. `package_ingredients`: Extracted text from product, including ingredients and nutritional info.
 
-1. `user_today_details`
-   - Foods eaten today
-   - Ingredients consumed
-   - Calories, sugar, sodium, carbs, fat, protein consumed
-   - Activities and calories burned
+OUTPUT FORMAT:
+Return ONLY a single valid JSON object with the exact structure below. Do not include markdown formatting (like ```json), comments, or multiple JSON blocks.
 
-2. `user_data`
-   - Age, height, weight, gender
-   - Medical conditions (diabetes, BP, cholesterol, thyroid, PCOS, etc.)
-   - Daily recommended nutrient limits based on their health profile
-   - Diet goals (weight loss, gain, maintenance)
+JSON STRUCTURE:
+{{
+    "nutrient_summary": {{
+        "calories": float,
+        "protein": float,
+        "carbs": float,
+        "fat": float,
+        "sugar": float,
+        "fiber": float,
+        "micronutrients": {{ ...flat list of vitamins and minerals... }}
+    }},
+    "ingredient_analysis": {{
+        "healthy_ingredients": [str],
+        "neutral_ingredients": [str],
+        "harmful_ingredients": [str]
+    }},
+    "macro_nutrients": {{
+        "calories": float,
+        "protein": float,
+        "carbs": float,
+        "fat": float
+    }},
+    "micro_nutrients": {{ ...same as micronutrients in summary... }},
+    "additives_and_preservatives": [str],
+    "recommendation": "eat" | "avoid" | "eat_limited",
+    "eat_or_not": boolean,
+    "why_eat": str (reasoning if healthy),
+    "why_avoid": str (reasoning if unhealthy),
+    "health_condition_check": {{ ...dictionary of condition checks... }} or description string,
+    "today_intake_comparison": {{ ...comparison data... }} or description string,
+    "time_suitability": str (based on current time: {datetime.now().strftime("%H:%M")}),
+    "better_alternative": [str] (list of better options if avoid)
+}}
 
-3. `package_ingredients`
-   - Extracted ingredients from the scanned product
-   - Macro nutrients (calories, protein, carbs, fats)
-   - Micro nutrients (vitamins, minerals, sodium, sugar, fiber)
-   - Additives, preservatives, artificial flavors, allergens
-   - Anything harmful or beneficial
-
-Your tasks:
-
-A) Generate a complete structured JSON containing:
-   - "nutrient_summary"
-   - "ingredient_analysis":
-        * "healthy_ingredients"
-        * "neutral_ingredients"
-        * "harmful_ingredients"
-   - "macro_nutrients"
-   - "micro_nutrients"
-   - "additives_and_preservatives"
-
-B) Generate a decision:
-   - "recommendation": "eat", "avoid", or "eat_limited"
-
-C) Provide detailed reasoning:
-   -"eat_or_not"(boolean)
-   - "why_eat"
-   - "why_avoid"
-   - "health_condition_check"
-   - "today_intake_comparison"
-
-D) Time-based recommendation:
-   - Use current time: {datetime.now().strftime("%H:%M")}
-   - "time_suitability"
-   - "better_alternative"
-
-E) If user doesn't provide any image and just provides the name of the food and some other details, then use that information.
-
-
-
-F) NOTE: All ingredients check perefcely For example: palm oil is very dangerous for health so check it carefully There are many things are good for health but it's some clones are very dangerous for health like the any good quilty oil is very good for health but it's some clones are very dangerous for health like the palm oil is very dangerous for health.
-
-
-Note : you main task is analysy package_ingredients and get the help og the user_data and user_today_details for the check the waht waht user today eat base on the you want to generate the full strucutre of the package_ingredients
-
-OUTPUT RULES:
-- Output MUST be strictly valid JSON.
-- DO NOT output any text outside the JSON block.
-- No explanations or commentary outside JSON.
-- The structure of "micro_nutrients" must be a flat object with keys for all vitamins (vitaminA...), minerals (calcium...sodium...), fatty acids (omega3...), and amino acids.
+IMPORTANT RULES:
+1. Return ONE single JSON object. Do not split into multiple objects.
+2. Ensure all field names match exactly.
+3. If specific numbers are missing, estimate based on standard food data or use 0.
+4. "micro_nutrients" must be a flat object with keys like "vitaminA", "calcium", "iron", etc.
+5. Analyze ingredients strictly (e.g., palm oil is harmful).
 """
 
 
@@ -200,8 +187,17 @@ def ai_answer(
 
     print(f"The Row answer is {raw}")
 
-    # --- JSON Parsing ---
-    return raw
+    # --- JSON Parsing / Cleaning ---
+    # Remove markdown code blocks if present
+    cleaned = raw.strip()
+    if cleaned.startswith("```json"):
+        cleaned = cleaned[7:]
+    if cleaned.startswith("```"):
+        cleaned = cleaned[3:]
+    if cleaned.endswith("```"):
+        cleaned = cleaned[:-3]
+    
+    return cleaned.strip()
 
 
 
