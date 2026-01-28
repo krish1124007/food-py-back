@@ -8,7 +8,7 @@ import json
 import os
 
 from utils.extract_text import extract_text
-from utils.ai_answer import ai_answer
+from utils.nutrition_analytics_agent import nutrition_analytics_agent
 from utils.dailyLimits import setDailyLimits
 
 app = FastAPI()
@@ -70,12 +70,13 @@ async def analyze(request: AnalyzeRequest):
         )
 
         # ----- AI CALL -----
-        ai_response = ai_answer(
+        ai_response = nutrition_analytics_agent(
             user_today_details_str,
             user_data_str,
             package_ingredients_str
         )
 
+        print("The answer is :" , ai_response)
         # ----- ALWAYS RETURN JSON -----
         return JSONResponse(
             status_code=200,

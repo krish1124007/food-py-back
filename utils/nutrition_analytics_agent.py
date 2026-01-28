@@ -28,68 +28,27 @@ class IngredientAnalysis(BaseModel):
     harmful_ingredients: List[str] = []
 
 
-class MacroNutrients(BaseModel):
+class DbUpdateIngredients(BaseModel):
     calories: Optional[float] = 0
     protein: Optional[float] = 0
     carbs: Optional[float] = 0
     fat: Optional[float] = 0
     sugar: Optional[float] = 0
     fiber: Optional[float] = 0
-
-
-class MicroNutrients(BaseModel):
-    # Vitamins
     vitaminA: float = 0
-    vitaminB1: float = 0
-    vitaminB2: float = 0
-    vitaminB3: float = 0
-    vitaminB5: float = 0
-    vitaminB6: float = 0
-    vitaminB7: float = 0
-    vitaminB9: float = 0
-    vitaminB12: float = 0
+    vitaminB: float = 0
     vitaminC: float = 0
     vitaminD: float = 0
     vitaminE: float = 0
     vitaminK: float = 0
-
-    # Minerals
     calcium: float = 0
-    iron: float = 0
-    magnesium: float = 0
-    phosphorus: float = 0
-    potassium: float = 0
-    sodium: float = 0  # Moved from Macros
-    zinc: float = 0
-    copper: float = 0
-    manganese: float = 0
-    selenium: float = 0
-    iodine: float = 0
-    chromium: float = 0
-    fluoride: float = 0
-    molybdenum: float = 0
+    
 
-    # Fatty Acids
-    omega3: float = 0
-    omega6: float = 0
-
-    # Amino Acids
-    leucine: float = 0
-    isoleucine: float = 0
-    valine: float = 0
-    lysine: float = 0
-    methionine: float = 0
-    phenylalanine: float = 0
-    threonine: float = 0
-    tryptophan: float = 0
-    histidine: float = 0
 
 
 class AiAnswer(BaseModel):
-    nutrient_summary: Dict[str, float]
     ingredient_analysis: IngredientAnalysis
-    macro_nutrients: MacroNutrients
-    micro_nutrients: MicroNutrients
+    DbUpdateIngredients: DbUpdateIngredients
     additives_and_preservatives: List[str]
 
     recommendation: str  # "eat", "avoid", "eat_limited"
@@ -100,7 +59,8 @@ class AiAnswer(BaseModel):
     today_intake_comparison: Optional[str]
 
     time_suitability: Optional[str]
-    better_alternative: Optional[str]
+    better_alternative: Optional[List[str]] = []  # Changed to List[str]
+
 
 
 
@@ -110,7 +70,7 @@ Your task is to analyze the given inputs and return a SINGLE, valid JSON object.
 
 INPUTS:
 1. `user_today_details`: Foods eaten today, current macro/micronutrient intake.
-2. `user_data`: User profile, health conditions, goals, daily limits.
+2. `user_data`: User profile, health conditions, goals, daily limits , user additional info.
 3. `package_ingredients`: Extracted text from product, including ingredients and nutritional info.
 
 OUTPUT FORMAT:
@@ -118,36 +78,36 @@ Return ONLY a single valid JSON object with the exact structure below. Do not in
 
 JSON STRUCTURE:
 {{
-    "nutrient_summary": {{
+    "DbUpdateIngredients": {{
         "calories": float,
         "protein": float,
         "carbs": float,
         "fat": float,
         "sugar": float,
         "fiber": float,
-        "micronutrients": {{ ...flat list of vitamins and minerals... }}
+        "vitaminA": float,
+        "vitaminB": float,
+        "vitaminC": float,
+        "vitaminD": float,
+        "vitaminE": float,
+        "vitaminK": float,
+        "calcium": float,
+        
     }},
     "ingredient_analysis": {{
         "healthy_ingredients": [str],
         "neutral_ingredients": [str],
         "harmful_ingredients": [str]
     }},
-    "macro_nutrients": {{
-        "calories": float,
-        "protein": float,
-        "carbs": float,
-        "fat": float
-    }},
-    "micro_nutrients": {{ ...same as micronutrients in summary... }},
     "additives_and_preservatives": [str],
     "recommendation": "eat" | "avoid" | "eat_limited",
     "eat_or_not": boolean,
-    "why_eat": str (reasoning if healthy),
-    "why_avoid": str (reasoning if unhealthy),
+    "why_eat": str (reasoning if healthy  , if it is unhealthy than make it null),
+    "why_avoid": str (reasoning if unhealthy, if it is healthy than make it null),
     "health_condition_check": {{ ...dictionary of condition checks... }} or description string,
     "today_intake_comparison": {{ ...comparison data... }} or description string,
     "time_suitability": str (based on current time: {datetime.now().strftime("%H:%M")}),
-    "better_alternative": [str] (list of better options if avoid)
+    "better_alternative": [str] (list of better options if avoid and other thing which we can eat replace of this)
 }}
 
 IMPORTANT RULES:
@@ -163,7 +123,7 @@ IMPORTANT RULES:
 # GROQ LLM CALL FUNCTION
 # ==============================
 
-def ai_answer(
+def nutrition_analytics_agent(
     user_today_details: str,
     user_data: str,
     package_ingredients: str

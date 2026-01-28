@@ -36,49 +36,13 @@ Return the JSON in exactly the structure below:
   "fat": ,
   "sugar": ,
   "fiber": ,
-
-  "micronutrients": {
-    "vitaminA": ,
-    "vitaminB1": ,
-    "vitaminB2": ,
-    "vitaminB3": ,
-    "vitaminB5": ,
-    "vitaminB6": ,
-    "vitaminB7": ,
-    "vitaminB9": ,
-    "vitaminB12": ,
-    "vitaminC": ,
-    "vitaminD": ,
-    "vitaminE": ,
-    "vitaminK": ,
-    "calcium": ,
-    "iron": ,
-    "magnesium": ,
-    "phosphorus": ,
-    "potassium": ,
-    "sodium": ,
-    "zinc": ,
-    "copper": ,
-    "manganese": ,
-    "selenium": ,
-    "iodine": ,
-    "chromium": ,
-    "fluoride": ,
-    "molybdenum": ,
-
-    "omega3": ,
-    "omega6": ,
-
-    "leucine": ,
-    "isoleucine": ,
-    "valine": ,
-    "lysine": ,
-    "methionine": ,
-    "phenylalanine": ,
-    "threonine": ,
-    "tryptophan": ,
-    "histidine": 
-  }
+  "vitaminA": ,
+  "vitaminB": ,
+  "vitaminC": ,
+  "vitaminD": ,
+  "vitaminE": ,
+  "vitaminK": ,
+  "calcium": 
 }
 """
 
