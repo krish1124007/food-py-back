@@ -68,7 +68,7 @@ INPUTS:
 🔴 CRITICAL INSTRUCTIONS FOR LABEL READING:
 1. **STRICTLY READ THE NUTRITION LABEL**: If a nutrition facts table is present in the extracted text, use EXACTLY those values. Do NOT estimate or guess when label data is available.
 2. **INGREDIENTS LIST PRIORITY**: Carefully read the complete ingredients list. Ingredients are listed in order of quantity (highest to lowest).
-3. **HARMFUL INGREDIENTS TO FLAG**: palm oil, hydrogenated oils, trans fats, high fructose corn syrup, artificial colors (Red 40, Yellow 5, Yellow 6, Blue 1, etc.), sodium benzoate, BHA, BHT, MSG, artificial sweeteners in excess (aspartame, sucralose, acesulfame K), excessive sodium (>400mg per serving).
+3. **HARMFUL INGREDIENTS TO FLAG**: (This is Example) palm oil, hydrogenated oils, trans fats, high fructose corn syrup, artificial colors (Red 40, Yellow 5, Yellow 6, Blue 1, etc.), sodium benzoate, BHA, BHT, MSG, artificial sweeteners in excess (aspartame, sucralose, acesulfame K), excessive sodium (>400mg per serving).
 4. **SERVING SIZE ATTENTION**: Pay close attention to serving size. If label shows "per 100g" or "per serving (50g)", calculate accordingly for the actual amount.
 5. **LABEL ACCURACY IS MANDATORY**: If nutritional values are clearly stated on the label, use them EXACTLY as written. Only estimate vitamins/minerals if not provided on label.
 
